@@ -56,7 +56,7 @@ for i in "${servers[@]}"; do
           zused=0;
         fi
         ztotal=$(echo $ii | awk -F'::' '{print $3}');
-        if [[ $ztotal -ne "none" ]]; then
+        if [[ $ztotal != "none" ]]; then
           ztotal=$(echo $ztotal | numfmt --to=iec);
         fi
         zperc=$(echo $ii | awk -F'::' '{print $4}');
@@ -80,7 +80,7 @@ for grp in $(id -G $QUSER 2>/dev/null); do
             zused=0;
           fi
           ztotal=$(echo $ii | awk -F'::' '{print $3}');
-          if [[ $ztotal -ne "none" ]]; then
+          if [[ $ztotal != "none" ]]; then
             ztotal=$(echo $ztotal | numfmt --to=iec);
           fi
           zperc=$(echo $ii | awk -F'::' '{print $4}');
