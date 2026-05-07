@@ -54,7 +54,7 @@ fi
 zcmd=$($ZFS $ZTYPE -p -n $1 2>/dev/null | sed -n '1!p');
 if [ -f $QLOC/quota.zfs ]; then
   > $QLOC/quota.zfs
-  for zquota in `echo "$zcmd"`; do
+  for zquota in $(echo "$zcmd"); do
     zuser=$(echo $zquota| awk '{print $3}');
     zused=$(echo $zquota| awk '{print $4}');
     zquot=$(echo $zquota| awk '{print $5}');
