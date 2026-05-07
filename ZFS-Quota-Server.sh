@@ -25,6 +25,8 @@ if [[ -z "$1" ]]; then
 fi
 
 # Check the zfs pool/vdev exists
+#   This check might have scope for better checks
+#   `zfs list -H -o name | grep -xF <pool>`
 $ZFS list 2>&1 | sed -n '1!p' | awk '{print $1}' | grep $1 >/dev/null 2>&1
 if [ $? -ne 0 ]; then
   echo "$1 cannot be found. Please check your ZFS setup."
