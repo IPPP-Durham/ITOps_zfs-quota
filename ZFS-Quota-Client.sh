@@ -5,7 +5,7 @@
 
 # User Quota
 servers[0]="/mnt/home"
-servers[2]="/mnt/storage"
+servers[1]="/mnt/storage"
 
 # Group Quota
 grpsrvs[0]="/mnt/groups"
@@ -18,20 +18,14 @@ else
 fi
 
 function check_bin() {
-  which $1 1>/dev/null 2>&1
-  if [[ $? -ne 0 ]]; then
+  if ! command -v "$1" &>/dev/null; then
     echo "$1 cannot be found. Please install it or add it to the path. Exiting."
     exit 1
   fi
 }
 
-check_bin which
-check_bin printf
-check_bin cat
 check_bin grep
-check_bin echo
 check_bin awk
-check_bin stat
 check_bin numfmt
 check_bin stat
 check_bin id
@@ -46,6 +40,7 @@ printf ' %-35s %-15s %-10s %-20s\n' "Mount Point" "Used" "Total" "Last Checked";
 # User Checks
 QUID=$(id -u $QUSER 2>/dev/null)
 for i in "${servers[@]}"; do
+  #zquota=$(grep -F "^$QUID::" $i/quota.zfs 2>/dev/null);
   zquota=$(cat $i/quota.zfs 2>/dev/null | grep $QUID 2>/dev/null);
   if [[ ! -z "$zquota" ]]; then
     for ii in $zquota; do
