@@ -58,7 +58,7 @@ if [ -f $QLOC/quota.zfs ]; then
     zuser=$(echo $zquota| awk '{print $3}');
     zused=$(echo $zquota| awk '{print $4}');
     zquot=$(echo $zquota| awk '{print $5}');
-    if [[ zquot -ne "none" ]]; then
+    if [[ $zquot != "none" ]]; then
       zperc=$(echo $zquota| awk '{printf "%.0f\n",  ($4/$5) * 100}');
     else
       zperc=0;
