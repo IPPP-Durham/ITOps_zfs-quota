@@ -1,5 +1,5 @@
 #!/bin/bash
-# ZFS Quota Server - Version 3
+# ZFS Quota Server - Version 3.1
 # 2021 - Adam Boutcher
 # IPPP, Durham University
 # This pulls the quota info from ZFS and outputs to a file to parse remotely
@@ -8,16 +8,13 @@ ZFS="/usr/sbin/zfs"
 
 # Function to check that a binary exists
 function check_bin() {
-  which $1 1>/dev/null 2>&1
-  if [[ $? -ne 0 ]]; then
+  if ! command -v "$1" &>/dev/null; then
     echo "$1 cannot be found. Please install it or add it to the path. Exiting."
     exit 1
   fi
 }
 
-check_bin which
 check_bin $ZFS
-check_bin echo
 check_bin awk
 check_bin sed
 check_bin grep
@@ -28,6 +25,8 @@ if [[ -z "$1" ]]; then
 fi
 
 # Check the zfs pool/vdev exists
+#   This check might have scope for better checks
+#   `zfs list -H -o name | grep -xF <pool>`
 $ZFS list 2>&1 | sed -n '1!p' | awk '{print $1}' | grep $1 >/dev/null 2>&1
 if [ $? -ne 0 ]; then
   echo "$1 cannot be found. Please check your ZFS setup."
@@ -52,18 +51,21 @@ else
 fi
 
 zcmd=$($ZFS $ZTYPE -p -n $1 2>/dev/null | sed -n '1!p');
+# If the file doesn't exist then the destination might not be available?
+# This is to combat ZFS not mounting but the tool trying to write anyway
+#  and then blocking the mount.
 if [ -f $QLOC/quota.zfs ]; then
   > $QLOC/quota.zfs
-  for zquota in `echo "$zcmd"`; do
+  for zquota in $(echo "$zcmd"); do
     zuser=$(echo $zquota| awk '{print $3}');
     zused=$(echo $zquota| awk '{print $4}');
     zquot=$(echo $zquota| awk '{print $5}');
-    if [[ zquot -ne "none" ]]; then
+    if [[ $zquot != "none" ]]; then
       zperc=$(echo $zquota| awk '{printf "%.0f\n",  ($4/$5) * 100}');
     else
       zperc=0;
     fi
-    echo -e "$zuser::$zused::$zquot::$zperc%" >> $QLOC/quota.zfs
+    printf '%s::%s::%s::%s%%\n' "$zuser" "$zused" "$zquot" "$zperc" >> "$QLOC/quota.zfs"
   done;
 fi
 # Reset IFS
