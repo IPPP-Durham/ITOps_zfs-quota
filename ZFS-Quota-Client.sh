@@ -1,5 +1,5 @@
 #!/bin/bash
-# ZFS Quota Client v2.5
+# ZFS Quota Client v2.6
 # 2021 - Adam Boutcher
 # IPPP, Durham University
 
@@ -32,7 +32,7 @@ check_bin id
 check_bin date
 check_bin getent
 
-printf "\n Storage Quota v2.5 BETA - This *might* sometimes break."
+printf "\n Storage Quota v2.6 BETA - This *might* sometimes break."
 printf "\n Group reports are entire group usage not individual.\n"
 printf "\n Quota Report for $QUSER\n"
 printf ' %-35s %-15s %-10s %-20s\n' "Mount Point" "Used" "Total" "Last Checked";

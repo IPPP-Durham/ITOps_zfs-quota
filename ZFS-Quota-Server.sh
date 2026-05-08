@@ -1,5 +1,5 @@
 #!/bin/bash
-# ZFS Quota Server - Version 3
+# ZFS Quota Server - Version 3.1
 # 2021 - Adam Boutcher
 # IPPP, Durham University
 # This pulls the quota info from ZFS and outputs to a file to parse remotely
